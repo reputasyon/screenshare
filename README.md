@@ -5,15 +5,22 @@
 ---
 
 <p align="center">
+  <img src="https://img.shields.io/github/stars/reputasyon/screenshare?style=social" alt="GitHub Stars">
+  <img src="https://img.shields.io/github/forks/reputasyon/screenshare?style=social" alt="GitHub Forks">
+  <img src="https://img.shields.io/github/license/reputasyon/screenshare" alt="License">
   <img src="https://img.shields.io/badge/Chrome-Extension-green?logo=googlechrome" alt="Chrome Extension">
   <img src="https://img.shields.io/badge/Manifest-V3-blue" alt="Manifest V3">
-  <img src="https://img.shields.io/badge/WebRTC-PeerJS-orange" alt="WebRTC">
-  <img src="https://img.shields.io/badge/License-MIT-yellow" alt="MIT License">
 </p>
 
 <p align="center">
   <strong>Mirror Chrome tabs to a second monitor or tablet - without the annoying "Stop sharing" badge!</strong>
 </p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/reputasyon/screenshare/main/demo.gif" alt="Demo" width="600">
+</p>
+
+> **Note:** Add a `demo.gif` to your repo showing the extension in action for best results!
 
 ---
 
