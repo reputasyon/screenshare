@@ -142,29 +142,70 @@
     }
 
     .control-btn {
-      width: 50px;
-      height: 50px;
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
-      border: none;
-      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      background: linear-gradient(145deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
       color: white;
-      font-size: 20px;
+      font-size: 22px;
       cursor: pointer;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      box-shadow:
+        0 4px 15px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      transition: all 0.2s ease;
     }
 
     .control-btn:hover {
-      background: rgba(255, 255, 255, 0.3);
+      background: linear-gradient(145deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 100%);
+      transform: scale(1.08);
+      box-shadow:
+        0 6px 20px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    .control-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* Fullscreen button - mavi */
+    #fullscreenBtn {
+      background: linear-gradient(145deg, rgba(102, 126, 234, 0.6) 0%, rgba(118, 75, 162, 0.4) 100%);
+      border-color: rgba(102, 126, 234, 0.5);
+    }
+
+    /* Pause button - turuncu */
+    #pauseBtn {
+      background: linear-gradient(145deg, rgba(255, 193, 7, 0.6) 0%, rgba(255, 152, 0, 0.4) 100%);
+      border-color: rgba(255, 193, 7, 0.5);
+    }
+
+    /* Mute button - yeşil */
+    #muteBtn {
+      background: linear-gradient(145deg, rgba(56, 239, 125, 0.6) 0%, rgba(17, 153, 142, 0.4) 100%);
+      border-color: rgba(56, 239, 125, 0.5);
+    }
+
+    /* Talk button - kırmızı */
+    #talkBtn {
+      background: linear-gradient(145deg, rgba(255, 82, 82, 0.6) 0%, rgba(255, 23, 68, 0.4) 100%);
+      border-color: rgba(255, 82, 82, 0.5);
     }
 
     .control-btn.talking {
-      background: rgba(255, 82, 82, 0.6);
-      animation: pulse 1s infinite;
+      background: linear-gradient(145deg, rgba(255, 23, 68, 0.9) 0%, rgba(213, 0, 0, 0.7) 100%);
+      border-color: rgba(255, 82, 82, 0.8);
+      animation: pulse 0.8s infinite;
+      box-shadow:
+        0 0 20px rgba(255, 82, 82, 0.6),
+        0 4px 15px rgba(0, 0, 0, 0.3);
     }
 
     @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
+      0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 82, 82, 0.6); }
+      50% { transform: scale(1.1); box-shadow: 0 0 30px rgba(255, 82, 82, 0.8); }
     }
   </style>
 </head>
