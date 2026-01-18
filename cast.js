@@ -121,6 +121,9 @@ function sendStreamToViewer(viewerId) {
 
   statusDiv.className = 'status connected';
   statusDiv.innerHTML = '✅ Tablet bağlandı! Yayın aktif.';
+
+  // Tablet bağlandığında preview'ı gizle (performans için)
+  previewVideo.style.display = 'none';
 }
 
 function updateViewerCount(delta) {
