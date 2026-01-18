@@ -123,14 +123,22 @@
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      gap: 15px;
-      opacity: 0;
+      gap: 12px;
+      opacity: 0.5;
       transition: opacity 0.3s;
     }
 
     body:hover .controls,
-    body:active .controls {
+    body:active .controls,
+    .controls:active {
       opacity: 1;
+    }
+
+    /* Tablet'te her zaman görünür */
+    @media (hover: none) {
+      .controls {
+        opacity: 1;
+      }
     }
 
     .control-btn {
