@@ -54,6 +54,15 @@
       box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
     }
 
+    .btn.green {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      margin-top: 10px;
+    }
+
+    .btn.green:hover {
+      box-shadow: 0 5px 20px rgba(56, 239, 125, 0.4);
+    }
+
     .info {
       margin-top: 15px;
       padding: 12px;
@@ -78,19 +87,24 @@
 <body>
   <div class="header">
     <h1>🖥️ Ekran Yansıt</h1>
-    <p>Monitör + Tablet aynı anda</p>
+    <p>Sekmeyi monitöre veya tablete yansıt</p>
   </div>
 
-  <button id="startBtn" class="btn">
-    <span>🚀</span>
-    <span>Kontrol Panelini Aç</span>
+  <button id="mirrorBtn" class="btn">
+    <span>📺</span>
+    <span>Monitöre Yansıt</span>
+  </button>
+
+  <button id="tabletBtn" class="btn green">
+    <span>📱</span>
+    <span>Tablete Gönder</span>
   </button>
 
   <div class="info">
-    <div class="info-title">📋 Nasıl Kullanılır?</div>
-    <div class="step">1. Kontrol panelini aç</div>
-    <div class="step">2. İstediğin hedefleri aktifleştir</div>
-    <div class="step">3. Monitör ve tablet aynı anda çalışır!</div>
+    <div class="info-title">📋 Kısayollar</div>
+    <div class="step">F - Tam ekran</div>
+    <div class="step">M - Ses aç/kapat</div>
+    <div class="step">R - Yeniden başlat</div>
   </div>
 
   <script src="popup.js"></script>
