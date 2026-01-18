@@ -166,6 +166,7 @@
 
   <div id="controls" class="controls hidden">
     <button class="control-btn" id="fullscreenBtn">⛶</button>
+    <button class="control-btn" id="pauseBtn">⏸</button>
     <button class="control-btn" id="muteBtn">🔊</button>
   </div>
 
@@ -181,6 +182,7 @@
     const video = document.getElementById('video');
     const controls = document.getElementById('controls');
     const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
     const muteBtn = document.getElementById('muteBtn');
     const fullscreenHint = document.getElementById('fullscreenHint');
 
@@ -305,6 +307,17 @@
         }
       }
     }
+
+    // Pause toggle
+    pauseBtn.addEventListener('click', () => {
+      if (video.paused) {
+        video.play();
+        pauseBtn.textContent = '⏸';
+      } else {
+        video.pause();
+        pauseBtn.textContent = '▶️';
+      }
+    });
 
     // Mute toggle
     muteBtn.addEventListener('click', () => {
