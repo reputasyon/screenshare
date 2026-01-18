@@ -117,6 +117,28 @@
       border-radius: 8px;
       margin-top: 20px;
     }
+
+    .audio-control {
+      margin-top: 15px;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .audio-control:hover {
+      transform: scale(1.05);
+    }
+
+    .audio-info {
+      margin-top: 10px;
+      font-size: 12px;
+      opacity: 0.7;
+    }
   </style>
 </head>
 <body>
@@ -144,6 +166,8 @@
     </div>
 
     <video id="preview" autoplay muted playsinline></video>
+    <button id="audioBtn" class="audio-control">🔊 Bilgisayar Sesini Aç</button>
+    <p class="audio-info">Tablette ses var. Butona tıkla, bilgisayarda da ses olsun.</p>
   </div>
 
   <script src="cast.js"></script>

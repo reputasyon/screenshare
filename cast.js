@@ -4,6 +4,7 @@ const statusDiv = document.getElementById('status');
 const urlBox = document.getElementById('urlBox');
 const viewerUrlLink = document.getElementById('viewerUrl');
 const previewVideo = document.getElementById('preview');
+const audioBtn = document.getElementById('audioBtn');
 
 let peer = null;
 let currentStream = null;
@@ -31,7 +32,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-// Tab capture başlat
+// Tab capture başlat (video + ses - tablette ses olsun, bilgisayarda da çalsın)
 async function startCapture() {
   currentStream = await navigator.mediaDevices.getUserMedia({
     video: {
@@ -48,8 +49,9 @@ async function startCapture() {
     }
   });
 
-  // Küçük önizleme göster
+  // Önizleme göster (ses kapalı başlasın, kullanıcı açacak)
   previewVideo.srcObject = currentStream;
+  previewVideo.muted = true;
 }
 
 // PeerJS bağlantısı kur
@@ -176,6 +178,19 @@ function showError(message) {
   statusDiv.className = 'status error';
   statusDiv.textContent = '❌ ' + message;
 }
+
+// Bilgisayar sesi aç/kapat butonu
+audioBtn.addEventListener('click', () => {
+  if (previewVideo.muted) {
+    previewVideo.muted = false;
+    audioBtn.textContent = '🔇 Bilgisayar Sesini Kapat';
+    audioBtn.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
+  } else {
+    previewVideo.muted = true;
+    audioBtn.textContent = '🔊 Bilgisayar Sesini Aç';
+    audioBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+  }
+});
 
 // Sayfa kapanırken temizlik
 window.addEventListener('beforeunload', () => {
