@@ -6,6 +6,7 @@ const errorDiv = document.getElementById('error');
 const fullscreenBtn = document.getElementById('fullscreenBtn');
 const restartBtn = document.getElementById('restartBtn');
 const closeBtn = document.getElementById('closeBtn');
+const muteBtn = document.getElementById('muteBtn');
 
 let currentStream = null;
 
@@ -163,6 +164,12 @@ closeBtn.addEventListener('click', function () {
   window.close();
 });
 
+// Ses aç/kapat
+muteBtn.addEventListener('click', function () {
+  video.muted = !video.muted;
+  muteBtn.textContent = video.muted ? '🔇 Ses Kapalı' : '🔊 Ses Açık';
+});
+
 // Klavye kısayolları
 document.addEventListener('keydown', function (e) {
   if (e.key === 'f' || e.key === 'F') {
@@ -170,6 +177,10 @@ document.addEventListener('keydown', function (e) {
   }
   if (e.key === 'r' || e.key === 'R') {
     restartCapture();
+  }
+  if (e.key === 'm' || e.key === 'M') {
+    video.muted = !video.muted;
+    muteBtn.textContent = video.muted ? '🔇 Ses Kapalı' : '🔊 Ses Açık';
   }
 });
 
