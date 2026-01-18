@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ekran Yansıt - İzleyici</title>
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: none;
+    }
+
+    .start-screen {
+      text-align: center;
+      color: white;
+      padding: 40px;
+    }
+
+    .start-screen h1 {
+      font-size: 28px;
+      margin-bottom: 15px;
+    }
+
+    .start-screen p {
+      opacity: 0.7;
+      margin-bottom: 30px;
+      font-size: 16px;
+    }
+
+    .btn {
+      padding: 18px 40px;
+      font-size: 18px;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      transition: transform 0.2s;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .status {
+      margin-top: 20px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .status.connecting {
+      background: rgba(255, 193, 7, 0.2);
+      color: #ffc107;
+    }
+
+    .status.connected {
+      background: rgba(56, 239, 125, 0.2);
+      color: #38ef7d;
+    }
+
+    .status.error {
+      background: rgba(255, 82, 82, 0.2);
+      color: #ff5252;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .fullscreen-hint {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .fullscreen-hint.show {
+      opacity: 1;
+    }
+
+    /* iPad için kontroller */
+    .controls {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 15px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    body:hover .controls,
+    body:active .controls {
+      opacity: 1;
+    }
+
+    .control-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+    }
+
+    .control-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div id="startScreen" class="start-screen">
+    <h1>📺 Ekran Yansıt</h1>
+    <p>Bilgisayardan gelen yayını izleyin</p>
+
+    <button id="connectBtn" class="btn">
+      ▶️ İzlemeye Başla
+    </button>
+
+    <div id="status" class="status hidden"></div>
+  </div>
+
+  <video id="video" autoplay playsinline></video>
+
+  <div id="controls" class="controls hidden">
+    <button class="control-btn" id="fullscreenBtn">⛶</button>
+    <button class="control-btn" id="muteBtn">🔊</button>
+  </div>
+
+  <div id="fullscreenHint" class="fullscreen-hint">
+    Tam ekran için çift dokunun
+  </div>
+
+  <script>
+    // DOM elementleri
+    const startScreen = document.getElementById('startScreen');
+    const connectBtn = document.getElementById('connectBtn');
+    const statusDiv = document.getElementById('status');
+    const video = document.getElementById('video');
+    const controls = document.getElementById('controls');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const muteBtn = document.getElementById('muteBtn');
+    const fullscreenHint = document.getElementById('fullscreenHint');
+
+    // URL'den peer ID al
+    const urlParams = new URLSearchParams(window.location.search);
+    const hostPeerId = urlParams.get('peerId');
+
+    let peer = null;
+
+    // Başlat butonuna tıklama
+    connectBtn.addEventListener('click', () => {
+      if (!hostPeerId) {
+        showStatus('Bağlantı bilgisi bulunamadı', 'error');
+        return;
+      }
+      connectToHost();
+    });
+
+    // Host'a bağlan
+    function connectToHost() {
+      showStatus('Bağlanıyor...', 'connecting');
+      connectBtn.disabled = true;
+      connectBtn.textContent = '⏳ Bağlanıyor...';
+
+      // Rastgele viewer ID
+      const viewerId = 'viewer-' + Math.random().toString(36).substr(2, 6);
+
+      peer = new Peer(viewerId, {
+        debug: 2
+      });
+
+      peer.on('open', () => {
+        console.log('Peer açıldı, host\'a bağlanılıyor:', hostPeerId);
+
+        // Host'u ara (video stream iste)
+        const call = peer.call(hostPeerId, null); // Boş stream gönder, karşılık bekle
+
+        // Aslında doğrusu: host'tan stream almak için ona bağlanmak
+        // PeerJS'de call yapan taraf stream gönderir, alan taraf alır
+        // Bu durumda viewer call yapmalı ama stream yok
+        // Çözüm: Data connection ile "stream iste" mesajı gönder
+
+        const conn = peer.connect(hostPeerId);
+
+        conn.on('open', () => {
+          console.log('Data bağlantısı kuruldu');
+          conn.send({ type: 'request-stream' });
+        });
+      });
+
+      // Gelen arama (host stream gönderdiğinde)
+      peer.on('call', (call) => {
+        console.log('Gelen arama!');
+        call.answer(); // Boş cevap ver, sadece al
+
+        call.on('stream', (remoteStream) => {
+          console.log('Stream alındı!');
+          video.srcObject = remoteStream;
+          video.play();
+
+          // UI güncelle
+          startScreen.classList.add('hidden');
+          video.style.display = 'block';
+          controls.classList.remove('hidden');
+
+          // Fullscreen hint göster
+          showFullscreenHint();
+        });
+
+        call.on('error', (err) => {
+          console.error('Call error:', err);
+          showStatus('Yayın hatası: ' + err, 'error');
+        });
+      });
+
+      peer.on('error', (error) => {
+        console.error('Peer error:', error);
+        showStatus('Bağlantı hatası: ' + error.type, 'error');
+        connectBtn.disabled = false;
+        connectBtn.textContent = '▶️ Tekrar Dene';
+      });
+
+      // 10 saniye timeout
+      setTimeout(() => {
+        if (!video.srcObject) {
+          showStatus('Bağlantı zaman aşımı. Tekrar deneyin.', 'error');
+          connectBtn.disabled = false;
+          connectBtn.textContent = '▶️ Tekrar Dene';
+        }
+      }, 10000);
+    }
+
+    function showStatus(message, type) {
+      statusDiv.textContent = message;
+      statusDiv.className = 'status ' + type;
+      statusDiv.classList.remove('hidden');
+    }
+
+    function showFullscreenHint() {
+      fullscreenHint.classList.add('show');
+      setTimeout(() => {
+        fullscreenHint.classList.remove('show');
+      }, 3000);
+    }
+
+    // Fullscreen toggle
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+    video.addEventListener('dblclick', toggleFullscreen);
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+          document.documentElement.webkitRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+      }
+    }
+
+    // Mute toggle
+    muteBtn.addEventListener('click', () => {
+      video.muted = !video.muted;
+      muteBtn.textContent = video.muted ? '🔇' : '🔊';
+    });
+
+    // Sayfa kapanırken temizlik
+    window.addEventListener('beforeunload', () => {
+      if (peer) {
+        peer.destroy();
+      }
+    });
+  </script>
+</body>
+</html>

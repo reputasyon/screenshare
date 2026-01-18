@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      width: 280px;
+      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: white;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .header h1 {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+    
+    .header p {
+      font-size: 11px;
+      opacity: 0.7;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 15px 20px;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    .info {
+      margin-top: 15px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      font-size: 11px;
+      line-height: 1.6;
+    }
+    
+    .info-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #ffc107;
+    }
+    
+    .step {
+      margin: 4px 0;
+      padding-left: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🖥️ Ekran Yansıt</h1>
+    <p>Sekmeyi ikinci monitöre yansıt</p>
+  </div>
+  
+  <button id="mirrorBtn" class="btn">
+    <span>📺</span>
+    <span>Yansıtmayı Başlat</span>
+  </button>
+
+  <button id="tabletBtn" class="btn" style="margin-top: 10px; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+    <span>📱</span>
+    <span>Tablete Gönder</span>
+  </button>
+
+  <div class="info">
+    <div class="info-title">📋 Nasıl Kullanılır?</div>
+    <div class="step">1. Butona tıkla</div>
+    <div class="step">2. Açılan listeden "Chrome Sekmesi" seç</div>
+    <div class="step">3. Video olan sekmeyi seç</div>
+    <div class="step">4. Pencereyi diğer monitöre taşı</div>
+    <div class="step">5. F tuşu ile tam ekran yap</div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Tablete Gönder - Ekran Yansıt</title>
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  <script src="https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 500px;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      opacity: 0.7;
+      margin-bottom: 30px;
+    }
+
+    #qrcode {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+    #qrcode canvas {
+      display: block;
+    }
+
+    .status {
+      padding: 15px 25px;
+      border-radius: 12px;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .status.waiting {
+      background: rgba(255, 193, 7, 0.2);
+      border: 1px solid #ffc107;
+    }
+
+    .status.connected {
+      background: rgba(56, 239, 125, 0.2);
+      border: 1px solid #38ef7d;
+    }
+
+    .status.error {
+      background: rgba(255, 82, 82, 0.2);
+      border: 1px solid #ff5252;
+    }
+
+    .url-box {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 12px;
+      word-break: break-all;
+      margin-bottom: 20px;
+    }
+
+    .url-box a {
+      color: #38ef7d;
+    }
+
+    .instructions {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 20px;
+      border-radius: 12px;
+      text-align: left;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .instructions h3 {
+      color: #ffc107;
+      margin-bottom: 10px;
+    }
+
+    .peer-id {
+      font-family: monospace;
+      background: rgba(0,0,0,0.3);
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    video {
+      max-width: 300px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📱 Tablete Gönder</h1>
+    <p class="subtitle">QR kodu tablet ile tarayın</p>
+
+    <div id="qrcode"></div>
+
+    <div id="status" class="status waiting">
+      ⏳ Tablet bağlantısı bekleniyor...
+    </div>
+
+    <div id="urlBox" class="url-box hidden">
+      <strong>Manuel bağlantı:</strong><br>
+      <a id="viewerUrl" href="#" target="_blank"></a>
+    </div>
+
+    <div class="instructions">
+      <h3>📋 Nasıl Kullanılır?</h3>
+      <p>1. iPad/Tablet ile QR kodu tarayın</p>
+      <p>2. Açılan sayfada "İzlemeye Başla" tıklayın</p>
+      <p>3. Video tablet ekranında görünecek</p>
+      <p style="margin-top: 10px; opacity: 0.7;">💡 Her iki cihaz da aynı WiFi'da olmalı</p>
+    </div>
+
+    <video id="preview" autoplay muted playsinline></video>
+  </div>
+
+  <script src="cast.js"></script>
+</body>
+</html>

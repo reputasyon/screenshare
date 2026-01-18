@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ekran Yansıtma</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    
+    #video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+      display: none;
+    }
+    
+    #startScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: white;
+    }
+    
+    #startScreen h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    
+    #startScreen p {
+      opacity: 0.7;
+      margin-bottom: 30px;
+    }
+    
+    .start-btn {
+      padding: 18px 40px;
+      font-size: 18px;
+      font-weight: 600;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      transition: all 0.3s;
+    }
+    
+    .start-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+    }
+    
+    .tip {
+      margin-top: 30px;
+      padding: 15px 25px;
+      background: rgba(255, 193, 7, 0.15);
+      border: 1px solid rgba(255, 193, 7, 0.3);
+      border-radius: 10px;
+      font-size: 13px;
+      max-width: 400px;
+      text-align: center;
+    }
+    
+    .tip strong {
+      color: #ffc107;
+    }
+    
+    #controls {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 10px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 1000;
+    }
+    
+    body:hover #controls {
+      opacity: 1;
+    }
+    
+    .control-btn {
+      padding: 10px 15px;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s;
+    }
+    
+    .control-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    
+    #error {
+      display: none;
+      color: #ff6b6b;
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(255, 107, 107, 0.1);
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="startScreen">
+    <h1>🖥️ Ekran Yansıtma</h1>
+    <p>Videoyu yansıtmak için başlat</p>
+    
+    <button class="start-btn" id="startBtn">▶️ Sekme Seç ve Başlat</button>
+    
+    <div class="tip">
+      <strong>💡 İpucu:</strong> Açılan pencerede <strong>"Chrome Sekmesi"</strong> sekmesini seç, 
+      sonra video olan sekmeye tıkla.
+    </div>
+    
+    <div id="error"></div>
+  </div>
+  
+  <video id="video" autoplay playsinline></video>
+  
+  <div id="controls">
+    <button class="control-btn" id="fullscreenBtn">⛶ Tam Ekran (F)</button>
+    <button class="control-btn" id="restartBtn">🔄 Yeniden Seç</button>
+    <button class="control-btn" id="closeBtn">✕ Kapat</button>
+  </div>
+  
+  <script src="mirror.js"></script>
+</body>
+</html>
