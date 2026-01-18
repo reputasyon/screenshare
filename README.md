@@ -5,8 +5,8 @@
 ---
 
 <p align="center">
-  <img src="https://img.shields.io/github/stars/reputasyon/screenshare?style=social" alt="GitHub Stars">
-  <img src="https://img.shields.io/github/forks/reputasyon/screenshare?style=social" alt="GitHub Forks">
+  <a href="https://github.com/reputasyon/screenshare/stargazers"><img src="https://img.shields.io/github/stars/reputasyon/screenshare?style=social" alt="GitHub Stars"></a>
+  <a href="https://github.com/reputasyon/screenshare/network/members"><img src="https://img.shields.io/github/forks/reputasyon/screenshare?style=social" alt="GitHub Forks"></a>
   <img src="https://img.shields.io/github/license/reputasyon/screenshare" alt="License">
   <img src="https://img.shields.io/badge/Chrome-Extension-green?logo=googlechrome" alt="Chrome Extension">
   <img src="https://img.shields.io/badge/Manifest-V3-blue" alt="Manifest V3">
