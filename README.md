@@ -41,6 +41,9 @@ Mirror any Chrome tab to a second monitor or stream it to your iPad/tablet via Q
 - **🚫 No Badge**: No annoying "Stop sharing" overlay
 - **🎬 60 FPS**: Smooth video playback
 - **🔊 Audio Support**: Sound is included in the stream
+- **🎤 Two-Way Voice Chat**: Push-to-talk between computer and tablet
+- **⏸️ Playback Controls**: Pause, mute, fullscreen controls on tablet
+- **🎨 Modern UI**: Glassmorphism style control buttons
 
 ### Quick Start
 
@@ -66,11 +69,14 @@ Aktif Chrome sekmesini ikinci monitöre veya tablete yansıtın. Eşinizle birli
 
 ## Özellikler
 
-- **Monitöre Yansıt**: Sekmeyi ikinci monitörde tam ekran izleyin
-- **Tablete Gönder**: QR kod ile iPad/Android tablete yayın yapın
-- **Badge Yok**: Tab Capture API sayesinde tarayıcıda rahatsız edici uyarı yok
-- **60 FPS**: Akıcı video deneyimi
-- **Ses Desteği**: Video sesi de aktarılır
+- **🖥️ Monitöre Yansıt**: Sekmeyi ikinci monitörde tam ekran izleyin
+- **📱 Tablete Gönder**: QR kod ile iPad/Android tablete yayın yapın
+- **🚫 Badge Yok**: Tab Capture API sayesinde tarayıcıda rahatsız edici uyarı yok
+- **🎬 60 FPS**: Akıcı video deneyimi
+- **🔊 Ses Desteği**: Video sesi de aktarılır
+- **🎤 Çift Yönlü Sesli İletişim**: Bilgisayar ve tablet arasında basılı tut-konuş
+- **⏸️ Oynatma Kontrolleri**: Tablette duraklat, ses, tam ekran butonları
+- **🎨 Modern Arayüz**: Cam efektli şık kontrol butonları
 
 ## Kurulum
 
@@ -103,6 +109,18 @@ Aktif Chrome sekmesini ikinci monitöre veya tablete yansıtın. Eşinizle birli
 6. Açılan sayfada "İzlemeye Başla" tıklayın
 
 **Not:** Bilgisayar ve tablet aynı WiFi ağında olmalıdır.
+
+### Tablet Kontrolleri
+Tablette video oynatılırken alt kısımda 4 buton görünür:
+- **⛶** Tam ekran aç/kapat
+- **⏸** Video duraklat/devam
+- **🔊** Ses aç/kapat
+- **🎤** Basılı tut ve konuş (bilgisayara ses gönder)
+
+### Sesli İletişim
+- **Tabletten bilgisayara:** 🎤 butonuna basılı tut
+- **Bilgisayardan tablete:** Cast sayfasındaki "Basılı Tut ve Konuş" butonunu kullan
+- Konuşurken video sesi otomatik kısılır
 
 ## Klavye Kısayolları
 
