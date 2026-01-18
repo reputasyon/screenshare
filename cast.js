@@ -5,10 +5,14 @@ const urlBox = document.getElementById('urlBox');
 const viewerUrlLink = document.getElementById('viewerUrl');
 const previewVideo = document.getElementById('preview');
 const audioBtn = document.getElementById('audioBtn');
+const talkBtn = document.getElementById('talkBtn');
 
 let peer = null;
 let currentStream = null;
 let connectedViewers = [];
+let remoteAudio = null; // Tabletten gelen ses için
+let micStream = null;
+let isTalking = false;
 
 // URL'den parametreleri al
 const urlParams = new URLSearchParams(window.location.search);
@@ -93,6 +97,30 @@ function initPeer() {
     if (error.type !== 'peer-unavailable') {
       showError('Bağlantı hatası: ' + error.type);
     }
+  });
+
+  // Tabletten gelen ses (push-to-talk)
+  peer.on('call', (call) => {
+    console.log('Tabletten ses geliyor!');
+    call.answer(); // Boş cevap ver, sadece al
+
+    call.on('stream', (remoteStream) => {
+      console.log('Tablet ses stream alındı!');
+      // Ses elementini oluştur veya güncelle
+      if (!remoteAudio) {
+        remoteAudio = document.createElement('audio');
+        remoteAudio.autoplay = true;
+        document.body.appendChild(remoteAudio);
+      }
+      remoteAudio.srcObject = remoteStream;
+    });
+
+    call.on('close', () => {
+      console.log('Tablet ses bağlantısı kapandı');
+      if (remoteAudio) {
+        remoteAudio.srcObject = null;
+      }
+    });
   });
 }
 
@@ -199,8 +227,53 @@ audioBtn.addEventListener('click', () => {
   }
 });
 
+// Push-to-talk: Bilgisayardan tablete konuş
+async function startTalking() {
+  if (isTalking || connectedViewers.length === 0) return;
+  isTalking = true;
+  talkBtn.classList.add('talking');
+  talkBtn.textContent = '🎤 Konuşuyor...';
+
+  try {
+    // Mikrofon izni al
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+    // Tüm bağlı viewer'lara ses gönder
+    connectedViewers.forEach(viewerId => {
+      const call = peer.call(viewerId, micStream);
+      console.log('Ses gönderiliyor:', viewerId);
+    });
+  } catch (err) {
+    console.error('Mikrofon hatası:', err);
+    isTalking = false;
+    talkBtn.classList.remove('talking');
+    talkBtn.textContent = 'Basılı Tut ve Konuş';
+  }
+}
+
+function stopTalking() {
+  if (!isTalking) return;
+  isTalking = false;
+  talkBtn.classList.remove('talking');
+  talkBtn.textContent = 'Basılı Tut ve Konuş';
+
+  // Mikrofonu kapat
+  if (micStream) {
+    micStream.getTracks().forEach(track => track.stop());
+    micStream = null;
+  }
+}
+
+// Mouse events
+talkBtn.addEventListener('mousedown', startTalking);
+talkBtn.addEventListener('mouseup', stopTalking);
+talkBtn.addEventListener('mouseleave', stopTalking);
+
 // Sayfa kapanırken temizlik
 window.addEventListener('beforeunload', () => {
+  if (micStream) {
+    micStream.getTracks().forEach(track => track.stop());
+  }
   if (currentStream) {
     currentStream.getTracks().forEach(track => track.stop());
   }

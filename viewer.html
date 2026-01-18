@@ -148,6 +148,16 @@
     .control-btn:hover {
       background: rgba(255, 255, 255, 0.3);
     }
+
+    .control-btn.talking {
+      background: rgba(255, 82, 82, 0.6);
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
   </style>
 </head>
 <body>
@@ -168,6 +178,7 @@
     <button class="control-btn" id="fullscreenBtn">⛶</button>
     <button class="control-btn" id="pauseBtn">⏸</button>
     <button class="control-btn" id="muteBtn">🔊</button>
+    <button class="control-btn" id="talkBtn">🎤</button>
   </div>
 
   <div id="fullscreenHint" class="fullscreen-hint">
@@ -184,6 +195,7 @@
     const fullscreenBtn = document.getElementById('fullscreenBtn');
     const pauseBtn = document.getElementById('pauseBtn');
     const muteBtn = document.getElementById('muteBtn');
+    const talkBtn = document.getElementById('talkBtn');
     const fullscreenHint = document.getElementById('fullscreenHint');
 
     // URL'den peer ID al
@@ -191,6 +203,10 @@
     const hostPeerId = urlParams.get('peerId');
 
     let peer = null;
+    let dataConn = null;
+    let micStream = null;
+    let isTalking = false;
+    let remoteAudio = null; // Bilgisayardan gelen ses için
 
     // Başlat butonuna tıklama
     connectBtn.addEventListener('click', () => {
@@ -225,11 +241,11 @@
         // Bu durumda viewer call yapmalı ama stream yok
         // Çözüm: Data connection ile "stream iste" mesajı gönder
 
-        const conn = peer.connect(hostPeerId);
+        dataConn = peer.connect(hostPeerId);
 
-        conn.on('open', () => {
+        dataConn.on('open', () => {
           console.log('Data bağlantısı kuruldu');
-          conn.send({ type: 'request-stream' });
+          dataConn.send({ type: 'request-stream' });
         });
       });
 
@@ -240,16 +256,32 @@
 
         call.on('stream', (remoteStream) => {
           console.log('Stream alındı!');
-          video.srcObject = remoteStream;
-          video.play();
 
-          // UI güncelle
-          startScreen.classList.add('hidden');
-          video.style.display = 'block';
-          controls.classList.remove('hidden');
+          // Video stream mi ses stream mi kontrol et
+          const hasVideo = remoteStream.getVideoTracks().length > 0;
 
-          // Fullscreen hint göster
-          showFullscreenHint();
+          if (hasVideo) {
+            // Video stream - ana ekrana göster
+            video.srcObject = remoteStream;
+            video.play();
+
+            // UI güncelle
+            startScreen.classList.add('hidden');
+            video.style.display = 'block';
+            controls.classList.remove('hidden');
+
+            // Fullscreen hint göster
+            showFullscreenHint();
+          } else {
+            // Sadece ses stream - bilgisayardan gelen konuşma
+            console.log('Bilgisayardan ses geliyor!');
+            if (!remoteAudio) {
+              remoteAudio = document.createElement('audio');
+              remoteAudio.autoplay = true;
+              document.body.appendChild(remoteAudio);
+            }
+            remoteAudio.srcObject = remoteStream;
+          }
         });
 
         call.on('error', (err) => {
@@ -325,8 +357,58 @@
       muteBtn.textContent = video.muted ? '🔇' : '🔊';
     });
 
+    // Push-to-talk: Basılı tut ve konuş
+    async function startTalking() {
+      if (isTalking) return;
+      isTalking = true;
+      talkBtn.classList.add('talking');
+
+      try {
+        // Mikrofon izni al
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+        // Bilgisayara ses gönder
+        const call = peer.call(hostPeerId, micStream);
+        console.log('Ses gönderiliyor...');
+      } catch (err) {
+        console.error('Mikrofon hatası:', err);
+        isTalking = false;
+        talkBtn.classList.remove('talking');
+      }
+    }
+
+    function stopTalking() {
+      if (!isTalking) return;
+      isTalking = false;
+      talkBtn.classList.remove('talking');
+
+      // Mikrofonu kapat
+      if (micStream) {
+        micStream.getTracks().forEach(track => track.stop());
+        micStream = null;
+      }
+    }
+
+    // Mouse events (bilgisayar)
+    talkBtn.addEventListener('mousedown', startTalking);
+    talkBtn.addEventListener('mouseup', stopTalking);
+    talkBtn.addEventListener('mouseleave', stopTalking);
+
+    // Touch events (tablet/telefon)
+    talkBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      startTalking();
+    });
+    talkBtn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      stopTalking();
+    });
+
     // Sayfa kapanırken temizlik
     window.addEventListener('beforeunload', () => {
+      if (micStream) {
+        micStream.getTracks().forEach(track => track.stop());
+      }
       if (peer) {
         peer.destroy();
       }

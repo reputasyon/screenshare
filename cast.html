@@ -155,6 +155,54 @@
       opacity: 0.6;
     }
 
+    .talk-section {
+      background: rgba(255, 82, 82, 0.15);
+      border: 1px solid rgba(255, 82, 82, 0.3);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .talk-section h4 {
+      font-size: 12px;
+      margin-bottom: 8px;
+      opacity: 0.9;
+    }
+
+    .talk-btn {
+      padding: 15px 20px;
+      background: linear-gradient(135deg, #ff5252 0%, #ff1744 100%);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+      width: 100%;
+      user-select: none;
+    }
+
+    .talk-btn:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 15px rgba(255, 82, 82, 0.4);
+    }
+
+    .talk-btn.talking {
+      background: linear-gradient(135deg, #ff1744 0%, #d50000 100%);
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .talk-info {
+      margin-top: 6px;
+      font-size: 10px;
+      opacity: 0.6;
+    }
+
     video {
       max-width: 180px;
       border-radius: 8px;
@@ -204,6 +252,12 @@
         <h4>🔊 Bilgisayar Sesi</h4>
         <button id="audioBtn" class="audio-control">Bilgisayar Sesini Aç</button>
         <p class="audio-info">Tablette ses var. Bilgisayarda da istersen aç.</p>
+      </div>
+
+      <div class="talk-section">
+        <h4>🎤 Tablete Konuş</h4>
+        <button id="talkBtn" class="talk-btn">Basılı Tut ve Konuş</button>
+        <p class="talk-info">Butona basılı tutarak tablete sesini gönder</p>
       </div>
     </div>
   </div>
