@@ -366,10 +366,16 @@
     });
 
     // Push-to-talk: Basılı tut ve konuş
+    let previousVolume = 1;
+
     async function startTalking() {
       if (isTalking) return;
       isTalking = true;
       talkBtn.classList.add('talking');
+
+      // Video sesini kıs (konuşurken karışmasın)
+      previousVolume = video.volume;
+      video.volume = 0.1;
 
       try {
         // Mikrofon izni al
@@ -382,6 +388,7 @@
         console.error('Mikrofon hatası:', err);
         isTalking = false;
         talkBtn.classList.remove('talking');
+        video.volume = previousVolume;
       }
     }
 
@@ -389,6 +396,9 @@
       if (!isTalking) return;
       isTalking = false;
       talkBtn.classList.remove('talking');
+
+      // Video sesini geri aç
+      video.volume = previousVolume;
 
       // Mikrofonu kapat
       if (micStream) {

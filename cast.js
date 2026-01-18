@@ -228,11 +228,17 @@ audioBtn.addEventListener('click', () => {
 });
 
 // Push-to-talk: Bilgisayardan tablete konuş
+let previousVolume = 1;
+
 async function startTalking() {
   if (isTalking || connectedViewers.length === 0) return;
   isTalking = true;
   talkBtn.classList.add('talking');
   talkBtn.textContent = '🎤 Konuşuyor...';
+
+  // Bilgisayar sesini kıs (konuşurken karışmasın)
+  previousVolume = previewVideo.volume;
+  previewVideo.volume = 0.1;
 
   try {
     // Mikrofon izni al
@@ -248,6 +254,7 @@ async function startTalking() {
     isTalking = false;
     talkBtn.classList.remove('talking');
     talkBtn.textContent = 'Basılı Tut ve Konuş';
+    previewVideo.volume = previousVolume;
   }
 }
 
@@ -256,6 +263,9 @@ function stopTalking() {
   isTalking = false;
   talkBtn.classList.remove('talking');
   talkBtn.textContent = 'Basılı Tut ve Konuş';
+
+  // Bilgisayar sesini geri aç
+  previewVideo.volume = previousVolume;
 
   // Mikrofonu kapat
   if (micStream) {
