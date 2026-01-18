@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Ekran Yansıt - Kontrol Paneli</title>
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  <script src="https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: white;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .header h1 {
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+
+    .tab-title {
+      font-size: 12px;
+      opacity: 0.7;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .preview-container {
+      margin-bottom: 20px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    #preview {
+      width: 100%;
+      display: block;
+    }
+
+    .targets {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .target-card {
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 15px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .target-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .target-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+    }
+
+    .target-title span:first-child {
+      font-size: 24px;
+    }
+
+    .status-badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .status-badge.inactive {
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.5);
+    }
+
+    .status-badge.active {
+      background: rgba(56, 239, 125, 0.2);
+      color: #38ef7d;
+    }
+
+    .status-badge.waiting {
+      background: rgba(255, 193, 7, 0.2);
+      color: #ffc107;
+    }
+
+    .target-btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .target-btn.primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .target-btn.success {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      color: white;
+    }
+
+    .target-btn.danger {
+      background: rgba(255, 82, 82, 0.2);
+      color: #ff5252;
+      border: 1px solid #ff5252;
+    }
+
+    .target-btn:hover {
+      transform: translateY(-1px);
+      opacity: 0.9;
+    }
+
+    .target-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .qr-section {
+      margin-top: 12px;
+      text-align: center;
+      display: none;
+    }
+
+    .qr-section.visible {
+      display: block;
+    }
+
+    .qr-code {
+      background: white;
+      padding: 15px;
+      border-radius: 12px;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+
+    .qr-code canvas {
+      display: block;
+    }
+
+    .qr-url {
+      font-size: 10px;
+      opacity: 0.6;
+      word-break: break-all;
+    }
+
+    .monitor-window {
+      margin-top: 10px;
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    .close-btn {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .close-btn:hover {
+      background: rgba(255,82,82,0.2);
+      border-color: #ff5252;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🎬 Kontrol Paneli</h1>
+    <div id="tabTitle" class="tab-title">Yükleniyor...</div>
+  </div>
+
+  <div class="preview-container">
+    <video id="preview" autoplay muted playsinline></video>
+  </div>
+
+  <div class="targets">
+    <!-- Monitör -->
+    <div class="target-card">
+      <div class="target-header">
+        <div class="target-title">
+          <span>🖥️</span>
+          <span>2. Monitör</span>
+        </div>
+        <span id="monitorStatus" class="status-badge inactive">Kapalı</span>
+      </div>
+      <button id="monitorBtn" class="target-btn primary">Monitörde Aç</button>
+      <div id="monitorInfo" class="monitor-window"></div>
+    </div>
+
+    <!-- Tablet -->
+    <div class="target-card">
+      <div class="target-header">
+        <div class="target-title">
+          <span>📱</span>
+          <span>Tablet</span>
+        </div>
+        <span id="tabletStatus" class="status-badge inactive">Kapalı</span>
+      </div>
+      <button id="tabletBtn" class="target-btn success">QR Kod Göster</button>
+      <div id="qrSection" class="qr-section">
+        <div id="qrCode" class="qr-code"></div>
+        <div id="qrUrl" class="qr-url"></div>
+      </div>
+    </div>
+  </div>
+
+  <button id="closeBtn" class="close-btn">🛑 Yayını Durdur ve Kapat</button>
+
+  <script src="control.js"></script>
+</body>
+</html>
