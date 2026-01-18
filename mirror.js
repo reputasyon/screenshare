@@ -38,7 +38,7 @@ async function startCaptureWithStreamId(streamId) {
       currentStream.getTracks().forEach(track => track.stop());
     }
 
-    // Tab Capture stream'i al
+    // Tab Capture stream'i al (sadece video, ses yok)
     currentStream = await navigator.mediaDevices.getUserMedia({
       video: {
         mandatory: {
@@ -46,12 +46,7 @@ async function startCaptureWithStreamId(streamId) {
           chromeMediaSourceId: streamId
         }
       },
-      audio: {
-        mandatory: {
-          chromeMediaSource: 'tab',
-          chromeMediaSourceId: streamId
-        }
-      }
+      audio: false  // Ses yakalama kapalı - bilgisayarda ses normal devam eder
     });
 
     // Video elementine bağla

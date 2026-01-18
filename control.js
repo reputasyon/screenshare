@@ -40,7 +40,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-// Tab capture başlat
+// Tab capture başlat (sadece video, ses yok - orijinal sekmede ses devam etsin)
 async function startCapture() {
   currentStream = await navigator.mediaDevices.getUserMedia({
     video: {
@@ -49,12 +49,7 @@ async function startCapture() {
         chromeMediaSourceId: streamId
       }
     },
-    audio: {
-      mandatory: {
-        chromeMediaSource: 'tab',
-        chromeMediaSourceId: streamId
-      }
-    }
+    audio: false  // Ses yakalama kapalı - bilgisayarda ses normal devam eder
   });
 
   preview.srcObject = currentStream;
