@@ -13,38 +13,49 @@
     }
 
     body {
-      min-height: 100vh;
+      height: 100vh;
       font-family: 'Segoe UI', Tahoma, sans-serif;
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
       color: white;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 15px;
+      overflow: hidden;
     }
 
     .container {
-      text-align: center;
-      max-width: 500px;
+      display: flex;
+      gap: 25px;
+      align-items: stretch;
+      max-width: 700px;
+      width: 100%;
+    }
+
+    .left-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .right-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
     h1 {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-
-    .subtitle {
-      opacity: 0.7;
-      margin-bottom: 30px;
+      font-size: 20px;
+      text-align: center;
     }
 
     #qrcode {
       background: white;
-      padding: 20px;
-      border-radius: 16px;
+      padding: 12px;
+      border-radius: 12px;
       display: inline-block;
-      margin-bottom: 20px;
     }
 
     #qrcode canvas {
@@ -52,10 +63,10 @@
     }
 
     .status {
-      padding: 15px 25px;
-      border-radius: 12px;
-      font-size: 16px;
-      margin-bottom: 20px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      text-align: center;
     }
 
     .status.waiting {
@@ -75,99 +86,126 @@
 
     .url-box {
       background: rgba(255, 255, 255, 0.1);
-      padding: 15px;
+      padding: 10px;
       border-radius: 8px;
-      font-size: 12px;
+      font-size: 11px;
       word-break: break-all;
-      margin-bottom: 20px;
     }
 
     .url-box a {
       color: #38ef7d;
     }
 
+    .hidden {
+      display: none !important;
+    }
+
     .instructions {
       background: rgba(255, 255, 255, 0.05);
-      padding: 20px;
-      border-radius: 12px;
-      text-align: left;
-      font-size: 14px;
-      line-height: 1.8;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      line-height: 1.6;
     }
 
     .instructions h3 {
       color: #ffc107;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
+      font-size: 13px;
     }
 
-    .peer-id {
-      font-family: monospace;
-      background: rgba(0,0,0,0.3);
-      padding: 5px 10px;
-      border-radius: 4px;
-      font-size: 14px;
+    .instructions p {
+      margin: 4px 0;
     }
 
-    .hidden {
-      display: none;
+    .audio-section {
+      background: rgba(102, 126, 234, 0.15);
+      border: 1px solid rgba(102, 126, 234, 0.3);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
     }
 
-    video {
-      max-width: 300px;
-      border-radius: 8px;
-      margin-top: 20px;
+    .audio-section h4 {
+      font-size: 12px;
+      margin-bottom: 8px;
+      opacity: 0.9;
     }
 
     .audio-control {
-      margin-top: 15px;
-      padding: 12px 20px;
+      padding: 10px 20px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       color: white;
-      font-size: 14px;
+      font-size: 13px;
       cursor: pointer;
       transition: all 0.3s;
+      width: 100%;
     }
 
     .audio-control:hover {
-      transform: scale(1.05);
+      transform: scale(1.02);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     }
 
     .audio-info {
-      margin-top: 10px;
-      font-size: 12px;
-      opacity: 0.7;
+      margin-top: 6px;
+      font-size: 10px;
+      opacity: 0.6;
+    }
+
+    video {
+      max-width: 180px;
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+
+    .preview-section {
+      text-align: center;
+    }
+
+    .preview-label {
+      font-size: 10px;
+      opacity: 0.5;
+      margin-bottom: 4px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>📱 Tablete Gönder</h1>
-    <p class="subtitle">QR kodu tablet ile tarayın</p>
-
-    <div id="qrcode"></div>
-
-    <div id="status" class="status waiting">
-      ⏳ Tablet bağlantısı bekleniyor...
+    <div class="left-panel">
+      <h1>📱 Tablete Gönder</h1>
+      <div id="qrcode"></div>
+      <div id="status" class="status waiting">
+        ⏳ Tablet bekleniyor...
+      </div>
+      <div class="preview-section">
+        <div class="preview-label">Önizleme</div>
+        <video id="preview" autoplay muted playsinline></video>
+      </div>
     </div>
 
-    <div id="urlBox" class="url-box hidden">
-      <strong>Manuel bağlantı:</strong><br>
-      <a id="viewerUrl" href="#" target="_blank"></a>
-    </div>
+    <div class="right-panel">
+      <div id="urlBox" class="url-box hidden">
+        <strong>Manuel bağlantı:</strong><br>
+        <a id="viewerUrl" href="#" target="_blank"></a>
+      </div>
 
-    <div class="instructions">
-      <h3>📋 Nasıl Kullanılır?</h3>
-      <p>1. iPad/Tablet ile QR kodu tarayın</p>
-      <p>2. Açılan sayfada "İzlemeye Başla" tıklayın</p>
-      <p>3. Video tablet ekranında görünecek</p>
-      <p style="margin-top: 10px; opacity: 0.7;">💡 Her iki cihaz da aynı WiFi'da olmalı</p>
-    </div>
+      <div class="instructions">
+        <h3>📋 Nasıl Kullanılır?</h3>
+        <p>1. iPad/Tablet ile QR kodu tarayın</p>
+        <p>2. "İzlemeye Başla" tıklayın</p>
+        <p>3. Video tablette görünecek</p>
+        <p style="opacity: 0.6; margin-top: 8px;">💡 Aynı WiFi'da olmalısınız</p>
+      </div>
 
-    <video id="preview" autoplay muted playsinline></video>
-    <button id="audioBtn" class="audio-control">🔊 Bilgisayar Sesini Aç</button>
-    <p class="audio-info">Tablette ses var. Butona tıkla, bilgisayarda da ses olsun.</p>
+      <div class="audio-section">
+        <h4>🔊 Bilgisayar Sesi</h4>
+        <button id="audioBtn" class="audio-control">Bilgisayar Sesini Aç</button>
+        <p class="audio-info">Tablette ses var. Bilgisayarda da istersen aç.</p>
+      </div>
+    </div>
   </div>
 
   <script src="cast.js"></script>

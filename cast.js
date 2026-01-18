@@ -49,9 +49,13 @@ async function startCapture() {
     }
   });
 
-  // Önizleme göster (ses kapalı başlasın, kullanıcı açacak)
+  // Önizleme göster (ses açık başlasın - bilgisayarda da ses olsun)
   previewVideo.srcObject = currentStream;
-  previewVideo.muted = true;
+  previewVideo.muted = false;
+
+  // Buton durumunu güncelle
+  audioBtn.textContent = 'Bilgisayar Sesini Kapat';
+  audioBtn.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
 }
 
 // PeerJS bağlantısı kur
