@@ -1,13 +1,16 @@
 {
   "manifest_version": 3,
   "name": "Ekran Yansıt",
-  "version": "1.2",
+  "version": "1.3",
   "description": "Aktif sekmeyi başka bir monitöre yansıt - Eşinle birlikte dizi izle!",
   "permissions": [
     "activeTab",
     "tabs",
     "tabCapture"
   ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' https://unpkg.com; object-src 'self'"
+  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
