@@ -11,6 +11,7 @@ let peer = null;
 let currentStream = null;
 let connectedViewers = [];
 let remoteAudio = null; // Tabletten gelen ses için
+let remoteCamera = null; // Tabletten gelen kamera için
 let micStream = null;
 let isTalking = false;
 
@@ -88,6 +89,18 @@ function initPeer() {
         if (data.type === 'request-stream') {
           sendStreamToViewer(conn.peer);
         }
+
+        // Kamera açıldı
+        if (data.type === 'camera-started') {
+          console.log('Tablet kamerası açıldı!');
+          showCameraPreview(true);
+        }
+
+        // Kamera kapandı
+        if (data.type === 'camera-stopped') {
+          console.log('Tablet kamerası kapandı!');
+          showCameraPreview(false);
+        }
       });
     });
   });
@@ -99,24 +112,37 @@ function initPeer() {
     }
   });
 
-  // Tabletten gelen ses (push-to-talk)
+  // Tabletten gelen ses veya kamera
   peer.on('call', (call) => {
-    console.log('Tabletten ses geliyor!');
+    console.log('Tabletten stream geliyor!');
     call.answer(); // Boş cevap ver, sadece al
 
     call.on('stream', (remoteStream) => {
-      console.log('Tablet ses stream alındı!');
-      // Ses elementini oluştur veya güncelle
-      if (!remoteAudio) {
-        remoteAudio = document.createElement('audio');
-        remoteAudio.autoplay = true;
-        document.body.appendChild(remoteAudio);
+      // Video track var mı kontrol et (kamera mı ses mi?)
+      const hasVideo = remoteStream.getVideoTracks().length > 0;
+
+      if (hasVideo) {
+        // Kamera stream
+        console.log('Tablet kamera stream alındı!');
+        remoteCamera = document.getElementById('cameraPreview');
+        if (remoteCamera) {
+          remoteCamera.srcObject = remoteStream;
+          remoteCamera.play();
+        }
+      } else {
+        // Ses stream
+        console.log('Tablet ses stream alındı!');
+        if (!remoteAudio) {
+          remoteAudio = document.createElement('audio');
+          remoteAudio.autoplay = true;
+          document.body.appendChild(remoteAudio);
+        }
+        remoteAudio.srcObject = remoteStream;
       }
-      remoteAudio.srcObject = remoteStream;
     });
 
     call.on('close', () => {
-      console.log('Tablet ses bağlantısı kapandı');
+      console.log('Tablet stream bağlantısı kapandı');
       if (remoteAudio) {
         remoteAudio.srcObject = null;
       }
@@ -278,6 +304,23 @@ function stopTalking() {
 talkBtn.addEventListener('mousedown', startTalking);
 talkBtn.addEventListener('mouseup', stopTalking);
 talkBtn.addEventListener('mouseleave', stopTalking);
+
+// Kamera preview göster/gizle
+function showCameraPreview(show) {
+  const cameraSection = document.getElementById('cameraSection');
+  const cameraPreview = document.getElementById('cameraPreview');
+
+  if (cameraSection) {
+    if (show) {
+      cameraSection.classList.remove('hidden');
+    } else {
+      cameraSection.classList.add('hidden');
+      if (cameraPreview) {
+        cameraPreview.srcObject = null;
+      }
+    }
+  }
+}
 
 // Sayfa kapanırken temizlik
 window.addEventListener('beforeunload', () => {

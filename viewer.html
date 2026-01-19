@@ -194,6 +194,18 @@
       border-color: rgba(255, 82, 82, 0.5);
     }
 
+    /* Camera button - cyan */
+    #cameraBtn {
+      background: linear-gradient(145deg, rgba(0, 188, 212, 0.6) 0%, rgba(0, 150, 136, 0.4) 100%);
+      border-color: rgba(0, 188, 212, 0.5);
+    }
+
+    .control-btn.camera-active {
+      background: linear-gradient(145deg, rgba(0, 188, 212, 0.9) 0%, rgba(0, 150, 136, 0.7) 100%);
+      border-color: rgba(0, 188, 212, 0.8);
+      box-shadow: 0 0 20px rgba(0, 188, 212, 0.6);
+    }
+
     .control-btn.talking {
       background: linear-gradient(145deg, rgba(255, 23, 68, 0.9) 0%, rgba(213, 0, 0, 0.7) 100%);
       border-color: rgba(255, 82, 82, 0.8);
@@ -228,6 +240,7 @@
     <button class="control-btn" id="pauseBtn">⏸</button>
     <button class="control-btn" id="muteBtn">🔊</button>
     <button class="control-btn" id="talkBtn">🎤</button>
+    <button class="control-btn" id="cameraBtn">📷</button>
   </div>
 
   <div id="fullscreenHint" class="fullscreen-hint">
@@ -245,6 +258,7 @@
     const pauseBtn = document.getElementById('pauseBtn');
     const muteBtn = document.getElementById('muteBtn');
     const talkBtn = document.getElementById('talkBtn');
+    const cameraBtn = document.getElementById('cameraBtn');
     const fullscreenHint = document.getElementById('fullscreenHint');
 
     // URL'den peer ID al
@@ -256,6 +270,8 @@
     let micStream = null;
     let isTalking = false;
     let remoteAudio = null; // Bilgisayardan gelen ses için
+    let cameraStream = null;
+    let isCameraOn = false;
 
     // Başlat butonuna tıklama
     connectBtn.addEventListener('click', () => {
@@ -463,10 +479,67 @@
       stopTalking();
     });
 
+    // Kamera toggle
+    cameraBtn.addEventListener('click', toggleCamera);
+
+    async function toggleCamera() {
+      if (isCameraOn) {
+        // Kamerayı kapat
+        stopCamera();
+      } else {
+        // Kamerayı aç
+        await startCamera();
+      }
+    }
+
+    async function startCamera() {
+      try {
+        // Ön kamerayı aç
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user' },
+          audio: false
+        });
+
+        isCameraOn = true;
+        cameraBtn.classList.add('camera-active');
+        cameraBtn.textContent = '📹';
+
+        // Bilgisayara kamera stream'i gönder
+        const call = peer.call(hostPeerId, cameraStream);
+        console.log('Kamera stream gönderiliyor...');
+
+        // Data connection ile kamera açıldığını bildir
+        if (dataConn && dataConn.open) {
+          dataConn.send({ type: 'camera-started' });
+        }
+      } catch (err) {
+        console.error('Kamera hatası:', err);
+        alert('Kamera açılamadı: ' + err.message);
+      }
+    }
+
+    function stopCamera() {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+      }
+      isCameraOn = false;
+      cameraBtn.classList.remove('camera-active');
+      cameraBtn.textContent = '📷';
+
+      // Data connection ile kamera kapandığını bildir
+      if (dataConn && dataConn.open) {
+        dataConn.send({ type: 'camera-stopped' });
+      }
+    }
+
     // Sayfa kapanırken temizlik
     window.addEventListener('beforeunload', () => {
       if (micStream) {
         micStream.getTracks().forEach(track => track.stop());
+      }
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
       }
       if (peer) {
         peer.destroy();

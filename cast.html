@@ -203,6 +203,34 @@
       opacity: 0.6;
     }
 
+    .camera-section {
+      background: rgba(0, 188, 212, 0.15);
+      border: 1px solid rgba(0, 188, 212, 0.3);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .camera-section h4 {
+      font-size: 12px;
+      margin-bottom: 8px;
+      opacity: 0.9;
+      color: #00bcd4;
+    }
+
+    .camera-section video {
+      width: 100%;
+      max-width: 200px;
+      border-radius: 8px;
+      background: #000;
+    }
+
+    .camera-info {
+      margin-top: 6px;
+      font-size: 10px;
+      opacity: 0.6;
+    }
+
     video {
       max-width: 180px;
       border-radius: 8px;
@@ -258,6 +286,12 @@
         <h4>🎤 Tablete Konuş</h4>
         <button id="talkBtn" class="talk-btn">Basılı Tut ve Konuş</button>
         <p class="talk-info">Butona basılı tutarak tablete sesini gönder</p>
+      </div>
+
+      <div id="cameraSection" class="camera-section hidden">
+        <h4>📹 Tablet Kamerası</h4>
+        <video id="cameraPreview" autoplay playsinline muted></video>
+        <p class="camera-info">Tabletin ön kamerası</p>
       </div>
     </div>
   </div>
