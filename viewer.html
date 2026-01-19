@@ -494,6 +494,14 @@
 
     async function startCamera() {
       try {
+        // Önce kamera izni durumunu kontrol et
+        const permissionStatus = await navigator.permissions.query({ name: 'camera' }).catch(() => null);
+
+        if (permissionStatus && permissionStatus.state === 'denied') {
+          alert('Kamera izni engellendi. Lütfen tarayıcı ayarlarından izin verin:\n\n1. Adres çubuğundaki kilit ikonuna tıklayın\n2. Kamera iznini "İzin Ver" olarak değiştirin\n3. Sayfayı yenileyin');
+          return;
+        }
+
         // Ön kamerayı aç
         cameraStream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: 'user' },
@@ -514,7 +522,16 @@
         }
       } catch (err) {
         console.error('Kamera hatası:', err);
-        alert('Kamera açılamadı: ' + err.message);
+
+        if (err.name === 'NotAllowedError') {
+          alert('Kamera izni reddedildi.\n\nİzin vermek için:\n1. Adres çubuğundaki kilit/kamera ikonuna tıklayın\n2. Kamera iznini açın\n3. Sayfayı yenileyin');
+        } else if (err.name === 'NotFoundError') {
+          alert('Kamera bulunamadı. Cihazınızda kamera olduğundan emin olun.');
+        } else if (err.name === 'NotReadableError') {
+          alert('Kamera başka bir uygulama tarafından kullanılıyor olabilir.');
+        } else {
+          alert('Kamera açılamadı: ' + err.message);
+        }
       }
     }
 
