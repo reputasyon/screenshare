@@ -6,10 +6,14 @@ const viewerUrlLink = document.getElementById('viewerUrl');
 const previewVideo = document.getElementById('preview');
 const audioBtn = document.getElementById('audioBtn');
 const talkBtn = document.getElementById('talkBtn');
+const fullscreenBtn = document.getElementById('fullscreenBtn');
+const switchCameraBtn = document.getElementById('switchCameraBtn');
+const closeCameraBtn = document.getElementById('closeCameraBtn');
 
 let peer = null;
 let currentStream = null;
 let connectedViewers = [];
+let dataConnections = []; // Tüm data connection'ları tut
 let remoteAudio = null; // Tabletten gelen ses için
 let remoteCamera = null; // Tabletten gelen kamera için
 let micStream = null;
@@ -59,8 +63,8 @@ async function startCapture() {
   previewVideo.muted = false;
 
   // Buton durumunu güncelle
-  audioBtn.textContent = 'Bilgisayar Sesini Kapat';
-  audioBtn.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
+  audioBtn.textContent = 'Sesi Kapat';
+  audioBtn.classList.add('active');
 }
 
 // PeerJS bağlantısı kur
@@ -82,6 +86,9 @@ function initPeer() {
     console.log('Viewer bağlandı:', conn.peer);
 
     conn.on('open', () => {
+      // Data connection'ı kaydet
+      dataConnections.push(conn);
+
       conn.on('data', (data) => {
         console.log('Gelen mesaj:', data);
 
@@ -101,6 +108,10 @@ function initPeer() {
           console.log('Tablet kamerası kapandı!');
           showCameraPreview(false);
         }
+      });
+
+      conn.on('close', () => {
+        dataConnections = dataConnections.filter(c => c !== conn);
       });
     });
   });
@@ -244,12 +255,12 @@ function showError(message) {
 audioBtn.addEventListener('click', () => {
   if (previewVideo.muted) {
     previewVideo.muted = false;
-    audioBtn.textContent = '🔇 Bilgisayar Sesini Kapat';
-    audioBtn.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
+    audioBtn.textContent = 'Sesi Kapat';
+    audioBtn.classList.add('active');
   } else {
     previewVideo.muted = true;
-    audioBtn.textContent = '🔊 Bilgisayar Sesini Aç';
-    audioBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+    audioBtn.textContent = 'Sesi Aç';
+    audioBtn.classList.remove('active');
   }
 });
 
@@ -321,6 +332,48 @@ function showCameraPreview(show) {
     }
   }
 }
+
+// Tam ekran toggle
+fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen();
+    } else if (document.documentElement.webkitRequestFullscreen) {
+      document.documentElement.webkitRequestFullscreen();
+    }
+    fullscreenBtn.textContent = 'Tam Ekrandan Çık';
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
+    fullscreenBtn.textContent = 'Tam Ekran Aç';
+  }
+}
+
+// Kamera değiştir butonu (tablete mesaj gönder)
+switchCameraBtn.addEventListener('click', () => {
+  // Tüm bağlı tabletlere kamera değiştir mesajı gönder
+  dataConnections.forEach(conn => {
+    if (conn.open) {
+      conn.send({ type: 'switch-camera' });
+    }
+  });
+});
+
+// Kamera kapat butonu (tablete mesaj gönder)
+closeCameraBtn.addEventListener('click', () => {
+  // Tüm bağlı tabletlere kamera kapat mesajı gönder
+  dataConnections.forEach(conn => {
+    if (conn.open) {
+      conn.send({ type: 'close-camera' });
+    }
+  });
+  showCameraPreview(false);
+});
 
 // Sayfa kapanırken temizlik
 window.addEventListener('beforeunload', () => {

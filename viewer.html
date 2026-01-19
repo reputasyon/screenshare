@@ -52,45 +52,52 @@
     }
 
     .btn {
-      padding: 18px 40px;
-      font-size: 18px;
-      font-weight: 600;
-      border: none;
-      border-radius: 12px;
+      padding: 18px 50px;
+      font-size: 17px;
+      font-weight: 500;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 14px;
       cursor: pointer;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: rgba(255, 255, 255, 0.1);
       color: white;
-      transition: transform 0.2s;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(10px);
     }
 
     .btn:hover {
-      transform: scale(1.05);
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
     }
 
     .btn:active {
-      transform: scale(0.98);
+      transform: translateY(0);
+      background: rgba(255, 255, 255, 0.2);
     }
 
     .status {
-      margin-top: 20px;
-      padding: 12px 20px;
-      border-radius: 8px;
+      margin-top: 24px;
+      padding: 12px 24px;
+      border-radius: 10px;
       font-size: 14px;
+      backdrop-filter: blur(10px);
     }
 
     .status.connecting {
-      background: rgba(255, 193, 7, 0.2);
-      color: #ffc107;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.7);
     }
 
     .status.connected {
-      background: rgba(56, 239, 125, 0.2);
+      background: rgba(56, 239, 125, 0.15);
+      border: 1px solid rgba(56, 239, 125, 0.3);
       color: #38ef7d;
     }
 
     .status.error {
-      background: rgba(255, 82, 82, 0.2);
-      color: #ff5252;
+      background: rgba(239, 83, 80, 0.15);
+      border: 1px solid rgba(239, 83, 80, 0.3);
+      color: #ef5350;
     }
 
     .hidden {
@@ -142,82 +149,59 @@
     }
 
     .control-btn {
-      width: 56px;
-      height: 56px;
+      width: 52px;
+      height: 52px;
       border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      background: linear-gradient(145deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
       color: white;
-      font-size: 22px;
+      font-size: 20px;
       cursor: pointer;
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      box-shadow:
-        0 4px 15px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
       transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .control-btn:hover {
-      background: linear-gradient(145deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 100%);
+      background: rgba(255, 255, 255, 0.2);
       transform: scale(1.08);
-      box-shadow:
-        0 6px 20px rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
     }
 
     .control-btn:active {
       transform: scale(0.95);
+      background: rgba(255, 255, 255, 0.25);
     }
 
-    /* Fullscreen button - mavi */
-    #fullscreenBtn {
-      background: linear-gradient(145deg, rgba(102, 126, 234, 0.6) 0%, rgba(118, 75, 162, 0.4) 100%);
-      border-color: rgba(102, 126, 234, 0.5);
+    /* Switch camera button - varsayilan gizli */
+    #switchCamBtn {
+      display: none;
     }
 
-    /* Pause button - turuncu */
-    #pauseBtn {
-      background: linear-gradient(145deg, rgba(255, 193, 7, 0.6) 0%, rgba(255, 152, 0, 0.4) 100%);
-      border-color: rgba(255, 193, 7, 0.5);
+    #switchCamBtn.visible {
+      display: flex;
     }
 
-    /* Mute button - yeşil */
-    #muteBtn {
-      background: linear-gradient(145deg, rgba(56, 239, 125, 0.6) 0%, rgba(17, 153, 142, 0.4) 100%);
-      border-color: rgba(56, 239, 125, 0.5);
-    }
-
-    /* Talk button - kırmızı */
-    #talkBtn {
-      background: linear-gradient(145deg, rgba(255, 82, 82, 0.6) 0%, rgba(255, 23, 68, 0.4) 100%);
-      border-color: rgba(255, 82, 82, 0.5);
-    }
-
-    /* Camera button - cyan */
-    #cameraBtn {
-      background: linear-gradient(145deg, rgba(0, 188, 212, 0.6) 0%, rgba(0, 150, 136, 0.4) 100%);
-      border-color: rgba(0, 188, 212, 0.5);
-    }
-
+    /* Aktif durumlar */
     .control-btn.camera-active {
-      background: linear-gradient(145deg, rgba(0, 188, 212, 0.9) 0%, rgba(0, 150, 136, 0.7) 100%);
-      border-color: rgba(0, 188, 212, 0.8);
-      box-shadow: 0 0 20px rgba(0, 188, 212, 0.6);
+      background: rgba(100, 181, 246, 0.4);
+      border-color: rgba(100, 181, 246, 0.6);
+      box-shadow: 0 0 15px rgba(100, 181, 246, 0.4);
     }
 
     .control-btn.talking {
-      background: linear-gradient(145deg, rgba(255, 23, 68, 0.9) 0%, rgba(213, 0, 0, 0.7) 100%);
-      border-color: rgba(255, 82, 82, 0.8);
-      animation: pulse 0.8s infinite;
-      box-shadow:
-        0 0 20px rgba(255, 82, 82, 0.6),
-        0 4px 15px rgba(0, 0, 0, 0.3);
+      background: rgba(239, 83, 80, 0.5);
+      border-color: rgba(239, 83, 80, 0.7);
+      animation: pulse 1s ease-in-out infinite;
+      box-shadow: 0 0 15px rgba(239, 83, 80, 0.4);
     }
 
     @keyframes pulse {
-      0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 82, 82, 0.6); }
-      50% { transform: scale(1.1); box-shadow: 0 0 30px rgba(255, 82, 82, 0.8); }
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
     }
   </style>
 </head>
@@ -241,6 +225,7 @@
     <button class="control-btn" id="muteBtn">🔊</button>
     <button class="control-btn" id="talkBtn">🎤</button>
     <button class="control-btn" id="cameraBtn">📷</button>
+    <button class="control-btn" id="switchCamBtn">🔄</button>
   </div>
 
   <div id="fullscreenHint" class="fullscreen-hint">
@@ -259,6 +244,7 @@
     const muteBtn = document.getElementById('muteBtn');
     const talkBtn = document.getElementById('talkBtn');
     const cameraBtn = document.getElementById('cameraBtn');
+    const switchCamBtn = document.getElementById('switchCamBtn');
     const fullscreenHint = document.getElementById('fullscreenHint');
 
     // URL'den peer ID al
@@ -272,6 +258,7 @@
     let remoteAudio = null; // Bilgisayardan gelen ses için
     let cameraStream = null;
     let isCameraOn = false;
+    let currentFacingMode = 'user'; // 'user' = ön kamera, 'environment' = arka kamera
 
     // Başlat butonuna tıklama
     connectBtn.addEventListener('click', () => {
@@ -311,6 +298,25 @@
         dataConn.on('open', () => {
           console.log('Data bağlantısı kuruldu');
           dataConn.send({ type: 'request-stream' });
+        });
+
+        // Bilgisayardan gelen mesajları dinle
+        dataConn.on('data', (data) => {
+          console.log('Bilgisayardan mesaj:', data);
+
+          if (data.type === 'switch-camera') {
+            // Kamera değiştir
+            if (isCameraOn) {
+              switchCamera();
+            }
+          }
+
+          if (data.type === 'close-camera') {
+            // Kamerayı kapat
+            if (isCameraOn) {
+              stopCamera();
+            }
+          }
         });
       });
 
@@ -492,7 +498,7 @@
       }
     }
 
-    async function startCamera() {
+    async function startCamera(facingMode = null) {
       try {
         // Önce kamera izni durumunu kontrol et
         const permissionStatus = await navigator.permissions.query({ name: 'camera' }).catch(() => null);
@@ -502,23 +508,28 @@
           return;
         }
 
-        // Ön kamerayı aç
+        // Hangi kamerayı kullanacağız
+        const useMode = facingMode || currentFacingMode;
+
+        // Kamerayı aç
         cameraStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'user' },
+          video: { facingMode: useMode },
           audio: false
         });
 
+        currentFacingMode = useMode;
         isCameraOn = true;
         cameraBtn.classList.add('camera-active');
         cameraBtn.textContent = '📹';
+        switchCamBtn.classList.add('visible');
 
         // Bilgisayara kamera stream'i gönder
         const call = peer.call(hostPeerId, cameraStream);
-        console.log('Kamera stream gönderiliyor...');
+        console.log('Kamera stream gönderiliyor... (', useMode === 'user' ? 'ön' : 'arka', 'kamera)');
 
         // Data connection ile kamera açıldığını bildir
         if (dataConn && dataConn.open) {
-          dataConn.send({ type: 'camera-started' });
+          dataConn.send({ type: 'camera-started', facingMode: useMode });
         }
       } catch (err) {
         console.error('Kamera hatası:', err);
@@ -529,6 +540,14 @@
           alert('Kamera bulunamadı. Cihazınızda kamera olduğundan emin olun.');
         } else if (err.name === 'NotReadableError') {
           alert('Kamera başka bir uygulama tarafından kullanılıyor olabilir.');
+        } else if (err.name === 'OverconstrainedError') {
+          // Arka kamera yoksa ön kameraya geri dön
+          if (currentFacingMode === 'environment') {
+            currentFacingMode = 'user';
+            await startCamera('user');
+          } else {
+            alert('Kamera açılamadı: ' + err.message);
+          }
         } else {
           alert('Kamera açılamadı: ' + err.message);
         }
@@ -543,11 +562,31 @@
       isCameraOn = false;
       cameraBtn.classList.remove('camera-active');
       cameraBtn.textContent = '📷';
+      switchCamBtn.classList.remove('visible');
 
       // Data connection ile kamera kapandığını bildir
       if (dataConn && dataConn.open) {
         dataConn.send({ type: 'camera-stopped' });
       }
+    }
+
+    // Kamera değiştir (ön/arka)
+    switchCamBtn.addEventListener('click', switchCamera);
+
+    async function switchCamera() {
+      if (!isCameraOn) return;
+
+      // Mevcut kamerayı kapat
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+      }
+
+      // Diğer kameraya geç
+      currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+
+      // Yeni kamerayı aç
+      await startCamera(currentFacingMode);
     }
 
     // Sayfa kapanırken temizlik
