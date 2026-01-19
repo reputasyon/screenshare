@@ -239,6 +239,29 @@
       text-align: center;
     }
 
+    .pin-box {
+      background: linear-gradient(135deg, rgba(56, 239, 125, 0.15) 0%, rgba(56, 239, 125, 0.05) 100%);
+      border: 1px solid rgba(56, 239, 125, 0.3);
+      border-radius: 12px;
+      padding: 12px 24px;
+      text-align: center;
+    }
+
+    .pin-label {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 4px;
+    }
+
+    .pin-code {
+      font-size: 32px;
+      font-weight: 700;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 8px;
+      color: #38ef7d;
+      text-shadow: 0 0 20px rgba(56, 239, 125, 0.5);
+    }
+
     .preview-section {
       text-align: center;
       margin-top: 4px;
@@ -290,6 +313,10 @@
     <div class="left-panel">
       <h1>📱 Tablete Gönder</h1>
       <div id="qrcode"></div>
+      <div id="pinBox" class="pin-box">
+        <div class="pin-label">Güvenlik PIN'i</div>
+        <div id="pinCode" class="pin-code">----</div>
+      </div>
       <div id="status" class="status waiting">
         Tablet bekleniyor...
       </div>

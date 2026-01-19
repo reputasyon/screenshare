@@ -20,6 +20,7 @@ let remoteAudio = null; // Tabletten gelen ses için
 let remoteCamera = null; // Tabletten gelen kamera için
 let micStream = null;
 let isTalking = false;
+let securityPin = null; // 4 haneli güvenlik PIN'i
 
 // URL'den parametreleri al
 const urlParams = new URLSearchParams(window.location.search);
@@ -69,8 +70,22 @@ async function startCapture() {
   audioBtn.classList.add('active');
 }
 
+// 4 haneli rastgele PIN oluştur
+function generatePin() {
+  securityPin = Math.floor(1000 + Math.random() * 9000).toString();
+  const pinCodeEl = document.getElementById('pinCode');
+  if (pinCodeEl) {
+    pinCodeEl.textContent = securityPin;
+  }
+  console.log('Güvenlik PIN:', securityPin);
+  return securityPin;
+}
+
 // PeerJS bağlantısı kur
 function initPeer() {
+  // PIN oluştur
+  generatePin();
+
   // Rastgele ama kısa bir ID oluştur
   const peerId = 'ekran-' + Math.random().toString(36).substr(2, 6);
 
@@ -85,14 +100,33 @@ function initPeer() {
 
   // Data connection geldiğinde (viewer bağlandığında)
   peer.on('connection', (conn) => {
-    console.log('Viewer bağlandı:', conn.peer);
+    console.log('Viewer bağlanmaya çalışıyor:', conn.peer);
+    let isAuthenticated = false;
 
     conn.on('open', () => {
-      // Data connection'ı kaydet
-      dataConnections.push(conn);
-
       conn.on('data', (data) => {
         console.log('Gelen mesaj:', data);
+
+        // PIN doğrulama
+        if (data.type === 'verify-pin') {
+          if (data.pin === securityPin) {
+            isAuthenticated = true;
+            dataConnections.push(conn);
+            conn.send({ type: 'pin-verified', success: true });
+            console.log('PIN doğrulandı, bağlantı onaylandı!');
+          } else {
+            conn.send({ type: 'pin-verified', success: false });
+            console.log('Yanlış PIN girişi!');
+          }
+          return;
+        }
+
+        // PIN doğrulanmadan diğer istekleri reddet
+        if (!isAuthenticated) {
+          console.log('Kimlik doğrulanmamış istek reddedildi');
+          conn.send({ type: 'error', message: 'PIN doğrulaması gerekli' });
+          return;
+        }
 
         // Viewer stream istedi, ona call yap
         if (data.type === 'request-stream') {

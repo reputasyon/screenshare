@@ -100,6 +100,70 @@
       color: #ef5350;
     }
 
+    /* PIN Giriş Ekranı */
+    .pin-screen {
+      text-align: center;
+      color: white;
+      padding: 40px;
+    }
+
+    .pin-screen h2 {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    .pin-screen p {
+      opacity: 0.7;
+      margin-bottom: 25px;
+      font-size: 14px;
+    }
+
+    .pin-input-container {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    .pin-input {
+      width: 55px;
+      height: 65px;
+      text-align: center;
+      font-size: 28px;
+      font-weight: 700;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .pin-input:focus {
+      border-color: #38ef7d;
+      background: rgba(56, 239, 125, 0.1);
+      box-shadow: 0 0 20px rgba(56, 239, 125, 0.3);
+    }
+
+    .pin-input.error {
+      border-color: #ef5350;
+      background: rgba(239, 83, 80, 0.1);
+      animation: shake 0.5s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+
+    .pin-error {
+      color: #ef5350;
+      font-size: 14px;
+      margin-bottom: 15px;
+      min-height: 20px;
+    }
+
     .hidden {
       display: none !important;
     }
@@ -217,6 +281,25 @@
     <div id="status" class="status hidden"></div>
   </div>
 
+  <!-- PIN Giriş Ekranı -->
+  <div id="pinScreen" class="pin-screen hidden">
+    <h2>🔐 Güvenlik PIN'i</h2>
+    <p>Bilgisayarda görünen 4 haneli PIN'i girin</p>
+
+    <div class="pin-input-container">
+      <input type="tel" class="pin-input" maxlength="1" data-index="0" inputmode="numeric" pattern="[0-9]*">
+      <input type="tel" class="pin-input" maxlength="1" data-index="1" inputmode="numeric" pattern="[0-9]*">
+      <input type="tel" class="pin-input" maxlength="1" data-index="2" inputmode="numeric" pattern="[0-9]*">
+      <input type="tel" class="pin-input" maxlength="1" data-index="3" inputmode="numeric" pattern="[0-9]*">
+    </div>
+
+    <div id="pinError" class="pin-error"></div>
+
+    <button id="verifyPinBtn" class="btn">
+      ✓ Doğrula
+    </button>
+  </div>
+
   <video id="video" autoplay playsinline></video>
 
   <div id="controls" class="controls hidden">
@@ -235,6 +318,7 @@
   <script>
     // DOM elementleri
     const startScreen = document.getElementById('startScreen');
+    const pinScreen = document.getElementById('pinScreen');
     const connectBtn = document.getElementById('connectBtn');
     const statusDiv = document.getElementById('status');
     const video = document.getElementById('video');
@@ -246,6 +330,9 @@
     const cameraBtn = document.getElementById('cameraBtn');
     const switchCamBtn = document.getElementById('switchCamBtn');
     const fullscreenHint = document.getElementById('fullscreenHint');
+    const pinInputs = document.querySelectorAll('.pin-input');
+    const verifyPinBtn = document.getElementById('verifyPinBtn');
+    const pinError = document.getElementById('pinError');
 
     // URL'den peer ID al
     const urlParams = new URLSearchParams(window.location.search);
@@ -259,6 +346,90 @@
     let cameraStream = null;
     let isCameraOn = false;
     let currentFacingMode = 'user'; // 'user' = ön kamera, 'environment' = arka kamera
+
+    // PIN input kontrolü - otomatik geçiş
+    pinInputs.forEach((input, index) => {
+      input.addEventListener('input', (e) => {
+        const value = e.target.value;
+
+        // Sadece rakam kabul et
+        if (!/^\d*$/.test(value)) {
+          e.target.value = '';
+          return;
+        }
+
+        // Sonraki input'a geç
+        if (value && index < pinInputs.length - 1) {
+          pinInputs[index + 1].focus();
+        }
+
+        // Hata stilini kaldır
+        input.classList.remove('error');
+        pinError.textContent = '';
+
+        // 4 hane doluysa otomatik doğrula
+        const pin = getEnteredPin();
+        if (pin.length === 4) {
+          verifyPin();
+        }
+      });
+
+      input.addEventListener('keydown', (e) => {
+        // Backspace ile önceki input'a geç
+        if (e.key === 'Backspace' && !e.target.value && index > 0) {
+          pinInputs[index - 1].focus();
+        }
+      });
+
+      // Paste desteği
+      input.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const pastedData = e.clipboardData.getData('text').slice(0, 4);
+        if (/^\d+$/.test(pastedData)) {
+          pastedData.split('').forEach((char, i) => {
+            if (pinInputs[i]) {
+              pinInputs[i].value = char;
+            }
+          });
+          if (pastedData.length === 4) {
+            verifyPin();
+          }
+        }
+      });
+    });
+
+    // Girilen PIN'i al
+    function getEnteredPin() {
+      return Array.from(pinInputs).map(input => input.value).join('');
+    }
+
+    // PIN doğrulama butonu
+    verifyPinBtn.addEventListener('click', verifyPin);
+
+    // PIN doğrula
+    function verifyPin() {
+      const pin = getEnteredPin();
+      if (pin.length !== 4) {
+        showPinError('4 haneli PIN girin');
+        return;
+      }
+
+      verifyPinBtn.disabled = true;
+      verifyPinBtn.textContent = '⏳ Doğrulanıyor...';
+
+      // PIN'i bilgisayara gönder
+      dataConn.send({ type: 'verify-pin', pin: pin });
+    }
+
+    // PIN hatası göster
+    function showPinError(message) {
+      pinError.textContent = message;
+      pinInputs.forEach(input => {
+        input.classList.add('error');
+        input.value = '';
+      });
+      pinInputs[0].focus();
+    }
 
     // Başlat butonuna tıklama
     connectBtn.addEventListener('click', () => {
@@ -297,12 +468,37 @@
 
         dataConn.on('open', () => {
           console.log('Data bağlantısı kuruldu');
-          dataConn.send({ type: 'request-stream' });
+          // PIN ekranını göster
+          startScreen.classList.add('hidden');
+          pinScreen.classList.remove('hidden');
+          pinInputs[0].focus();
         });
 
         // Bilgisayardan gelen mesajları dinle
         dataConn.on('data', (data) => {
           console.log('Bilgisayardan mesaj:', data);
+
+          // PIN doğrulama cevabı
+          if (data.type === 'pin-verified') {
+            if (data.success) {
+              // PIN doğru, stream iste
+              console.log('PIN doğrulandı!');
+              pinScreen.classList.add('hidden');
+              dataConn.send({ type: 'request-stream' });
+            } else {
+              // PIN yanlış
+              showPinError('Yanlış PIN! Tekrar deneyin.');
+              verifyPinBtn.disabled = false;
+              verifyPinBtn.textContent = '✓ Doğrula';
+            }
+            return;
+          }
+
+          // Hata mesajı
+          if (data.type === 'error') {
+            console.error('Hata:', data.message);
+            return;
+          }
 
           if (data.type === 'open-camera') {
             // Kamerayı aç (bilgisayardan uzaktan açma)
