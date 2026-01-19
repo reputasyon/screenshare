@@ -332,10 +332,17 @@
         <button id="fullscreenBtn" class="btn">Tam Ekran</button>
       </div>
 
-      <div id="cameraSection" class="card camera-section hidden">
+      <div class="card">
         <h4><span>📹</span> Tablet Kamerası</h4>
+        <button id="openCameraBtn" class="btn primary">Kamerayı Aç</button>
+        <p class="info-text">Tablet kamerasını uzaktan aç</p>
+      </div>
+
+      <div id="cameraSection" class="card camera-section hidden">
+        <h4><span>📹</span> Tablet Kamerası - Canlı</h4>
         <video id="cameraPreview" autoplay playsinline muted></video>
         <div class="btn-group">
+          <button id="cameraFullscreenBtn" class="btn">⛶ Tam Ekran</button>
           <button id="switchCameraBtn" class="btn">🔄 Değiştir</button>
           <button id="closeCameraBtn" class="btn danger">Kapat</button>
         </div>

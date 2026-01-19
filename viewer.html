@@ -304,6 +304,13 @@
         dataConn.on('data', (data) => {
           console.log('Bilgisayardan mesaj:', data);
 
+          if (data.type === 'open-camera') {
+            // Kamerayı aç (bilgisayardan uzaktan açma)
+            if (!isCameraOn) {
+              startCamera();
+            }
+          }
+
           if (data.type === 'switch-camera') {
             // Kamera değiştir
             if (isCameraOn) {

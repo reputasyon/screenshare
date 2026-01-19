@@ -9,6 +9,8 @@ const talkBtn = document.getElementById('talkBtn');
 const fullscreenBtn = document.getElementById('fullscreenBtn');
 const switchCameraBtn = document.getElementById('switchCameraBtn');
 const closeCameraBtn = document.getElementById('closeCameraBtn');
+const openCameraBtn = document.getElementById('openCameraBtn');
+const cameraFullscreenBtn = document.getElementById('cameraFullscreenBtn');
 
 let peer = null;
 let currentStream = null;
@@ -373,6 +375,40 @@ closeCameraBtn.addEventListener('click', () => {
     }
   });
   showCameraPreview(false);
+});
+
+// Kamera aç butonu (tablete mesaj gönder - uzaktan açma)
+openCameraBtn.addEventListener('click', () => {
+  if (connectedViewers.length === 0) {
+    alert('Önce tablet bağlanmalı!');
+    return;
+  }
+  // Tüm bağlı tabletlere kamera aç mesajı gönder
+  dataConnections.forEach(conn => {
+    if (conn.open) {
+      conn.send({ type: 'open-camera' });
+    }
+  });
+});
+
+// Kamera video'sunu tam ekran yap
+cameraFullscreenBtn.addEventListener('click', () => {
+  const cameraPreview = document.getElementById('cameraPreview');
+  if (!cameraPreview) return;
+
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    if (cameraPreview.requestFullscreen) {
+      cameraPreview.requestFullscreen();
+    } else if (cameraPreview.webkitRequestFullscreen) {
+      cameraPreview.webkitRequestFullscreen();
+    }
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
+  }
 });
 
 // Sayfa kapanırken temizlik
